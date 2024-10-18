@@ -1,0 +1,19 @@
+# Ignore Python bytecode and compiled files
+*.pyc
+__pycache__/
+
+# Ignore virtual environments
+venv/
+env/
+
+# Ignore database files
+*.sqlite3
+
+# Ignore PyCharm project-specific settings
+.idea/
+
+# Ignore environment variables file
+.env
+
+# Ignore static files (if managed by Django)
+static/
