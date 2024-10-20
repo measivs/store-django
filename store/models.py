@@ -1,7 +1,7 @@
 from enum import unique
 from idlelib.pyparse import trans
 from mptt.models import MPTTModel, TreeForeignKey
-
+from django.urls import reverse
 from django.db import models
 
 # Create your models here.
@@ -10,6 +10,9 @@ class Category(MPTTModel):
     category_name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+    # def get_url(self):
+    #     return reverse('products_by_category', args=[self.slug])
 
     class MPTTMeta:
         order_insertion_by = ['category_name']
