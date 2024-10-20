@@ -1,13 +1,18 @@
 from enum import unique
 from idlelib.pyparse import trans
+from mptt.models import MPTTModel, TreeForeignKey
 
 from django.db import models
 
 # Create your models here.
 
-class Category(models.Model):
+class Category(MPTTModel):
     category_name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, null=True)
+    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+
+    class MPTTMeta:
+        order_insertion_by = ['category_name']
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -27,4 +32,3 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
-
