@@ -1,22 +1,27 @@
-from itertools import product
-from lib2to3.fixes.fix_input import context
 from django.shortcuts import render, get_object_or_404
-from unicodedata import category
 
 from store.models import Product, Category
 from django.db.models import Count
 
 # Create your views here.
-
 def home(request):
     parent_categories = Category.objects.filter(parent__isnull=True)
-    fruits_category = Category.objects.get(category_name='fruits')
-    fruits_products = Product.objects.filter(category__in=fruits_category.get_children())
-    vegetables_category = Category.objects.get(category_name='vegetables')
-    vegetables_products = Product.objects.filter(category__in=vegetables_category.get_children())
-    context = {'parent_categories': parent_categories,
-               'fruits_products': fruits_products,
-               'vegetables_products': vegetables_products,}
+
+    fruits_category = Category.objects.filter(category_name='fruits').first()
+    fruits_products = Product.objects.none()
+    if fruits_category:
+        fruits_products = Product.objects.filter(category__in=fruits_category.get_children())
+
+    vegetables_category = Category.objects.filter(category_name='vegetables').first()
+    vegetables_products = Product.objects.none()
+    if vegetables_category:
+        vegetables_products = Product.objects.filter(category__in=vegetables_category.get_children())
+
+    context = {
+        'parent_categories': parent_categories,
+        'fruits_products': fruits_products,
+        'vegetables_products': vegetables_products,
+    }
 
     return render(request, 'index.html', context=context)
 
