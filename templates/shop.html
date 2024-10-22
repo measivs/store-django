@@ -2,25 +2,6 @@
 {% load static %}
 
 {% block content %}
-        <!-- Modal Search Start -->
-        <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen">
-                <div class="modal-content rounded-0">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Search by keyword</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body d-flex align-items-center">
-                        <div class="input-group w-75 mx-auto d-flex">
-                            <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                            <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Modal Search End -->
-    
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
             <h1 class="text-center text-white display-6">Shop</h1>
@@ -114,7 +95,7 @@
                                             {% endfor %}
                                         </div>
                                     </div>
-                                    
+
                                     <div style="text-align: center; margin-top: 20px;">
                                         <div class="pagination" style="display: inline-block;">
                                             <span class="step-links" style="font-family: Arial, sans-serif; font-size: 16px;">
@@ -122,11 +103,11 @@
                                                     <a href="?page=1" style="margin: 0 5px; text-decoration: none; color: blue;">&laquo; first</a>
                                                     <a href="?page={{ page_obj.previous_page_number }}" style="margin: 0 5px; text-decoration: none; color: blue;">previous</a>
                                                 {% endif %}
-                                    
+
                                                 <span class="current" style="margin: 0 5px; font-weight: bold;">
                                                     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
                                                 </span>
-                                    
+
                                                 {% if page_obj.has_next %}
                                                     <a href="?page={{ page_obj.next_page_number }}" style="margin: 0 5px; text-decoration: none; color: blue;">next</a>
                                                     <a href="?page={{ page_obj.paginator.num_pages }}" style="margin: 0 5px; text-decoration: none; color: blue;">last &raquo;</a>
@@ -134,7 +115,7 @@
                                             </span>
                                         </div>
                                     </div>
-                        
+
                                     </div>
                                 </div>
                             </div>

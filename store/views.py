@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 
@@ -36,6 +37,10 @@ def category_list(request, slug=None):
         products = Product.objects.all()
 
     subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
+
+    search_query = request.GET.get('q')
+    if search_query:
+        products = products.filter(Q(name__icontains=search_query))
 
     paginator = Paginator(products, 2)
     page_number = request.GET.get('page')
