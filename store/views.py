@@ -1,3 +1,5 @@
+from django.db.models import Q
+from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 
 from store.models import Product, Category
@@ -26,19 +28,30 @@ def home(request):
     return render(request, 'index.html', context=context)
 
 def category_list(request, slug=None):
-    categories = None
     products = None
+
     if slug:
         categories = get_object_or_404(Category, slug=slug)
         products = Product.objects.filter(category=categories)
     else:
         products = Product.objects.all()
 
-    # all_products = Product.objects.all()
     subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
-    context = {'products': products,
-               'subcategories': subcategories,
-                }
+
+    search_query = request.GET.get('q')
+    if search_query:
+        products = products.filter(Q(name__icontains=search_query))
+
+    paginator = Paginator(products, 2)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'subcategories': subcategories,
+        'page_obj': page_obj,
+        'products': products,
+        'all_products_count': Product.objects.count()
+    }
 
     return render(request, 'shop.html', context=context)
 
