@@ -31,23 +31,29 @@
                                 <p class="mb-3">Category: {{ single_product.category }}</p>
                                 <h5 class="fw-bold mb-3">{{ single_product.price }} $</h5>
                                 <p class="mb-4">{{ single_product.description }}</p>
-                                <div class="input-group quantity mb-5" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border" >
-                                            <i class="fa fa-minus"></i>
-                                        </button>
+                                
+                                <form method="POST" action="{% url 'add_to_cart' single_product.id %}">
+                                    {% csrf_token %}
+                                    <div class="input-group quantity mb-5" style="width: 100px;">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-sm btn-minus rounded-circle bg-light border" onclick="decrementQuantity()">
+                                                <i class="fa fa-minus"></i>
+                                            </button>
+                                        </div>
+                                        <input type="text" class="form-control form-control-sm text-center border-0" name="quantity" id="quantity" value="1" min="1">
+                                        <div class="input-group-btn">
+                                            <button type="button" class="btn btn-sm btn-plus rounded-circle bg-light border" onclick="incrementQuantity()">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                        </div>
                                     </div>
-                                    <input type="text" class="form-control form-control-sm text-center border-0" value="1">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
+                                    
+                                    <button type="submit" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
+                                        <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
+                                    </button>
+                                </form>
                             </div>
-                        </div>
-                    </div>
+
                     <div class="col-lg-4 col-xl-3">
                         <div class="row g-4 fruite">
                             <div class="col-lg-12">
