@@ -36,17 +36,22 @@ def category_list(request, slug=None):
     else:
         products = Product.objects.all()
 
-    subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
-
     product_tags = ProductTag.objects.all()
+
+    selected_tag_id = request.GET.get('tag')
+    if selected_tag_id:
+        products = products.filter(tag__id=selected_tag_id)
 
     search_query = request.GET.get('q')
     if search_query:
         products = products.filter(Q(name__icontains=search_query))
 
+    # Pagination
     paginator = Paginator(products, 2)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
 
     context = {
         'product_tags': product_tags,
@@ -57,6 +62,7 @@ def category_list(request, slug=None):
     }
 
     return render(request, 'shop.html', context=context)
+
 
 def product_detail(request, slug, product_slug):
     try:
