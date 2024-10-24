@@ -24,6 +24,13 @@ class Category(MPTTModel):
         return self.category_name
 
 
+class ProductTag(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+
+
 class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
@@ -32,6 +39,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True)
     quantity = models.IntegerField(default=0)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products', null=True)
+    tag = models.ManyToManyField(ProductTag, related_name='tags')
 
     def __str__(self):
         return self.name
