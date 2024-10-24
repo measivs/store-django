@@ -1,12 +1,8 @@
-from itertools import product
-from lib2to3.fixes.fix_input import context
-
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 
 from store.models import Product, Category, ProductTag
-from django.db.models import Count
 
 # Create your views here.
 def home(request):
@@ -48,14 +44,12 @@ def category_list(request, slug=None):
     else:
         products = Product.objects.all()
 
-
     parent_categories = Category.objects.filter(parent__isnull=True)
     subcategories = Category.objects.filter(parent__isnull=False)
 
     product_tags = ProductTag.objects.all()
     selected_tag_slug = request.GET.get('tag', None)
 
-    # Filter by tag if one is selected
     if selected_tag_slug:
         selected_tag = get_object_or_404(ProductTag, slug=selected_tag_slug)
         products = products.filter(tags=selected_tag)
@@ -76,22 +70,6 @@ def category_list(request, slug=None):
         'products': products,
         'selected_category': selected_category,
         'selected_tag': selected_tag_slug,
-    }
-
-    return render(request, 'shop.html', context=context)
-
-def filter_tag(request, slug):
-    products = Product.objects.all()
-
-    selected_tag = request.GET.get('tag')
-    if selected_tag:
-        products = Product.objects.filter(tags__name=selected_tag, slug=slug)
-
-    tags = ProductTag.objects.all()
-
-    context = {
-        'tags': tags,
-        'products': products,
     }
 
     return render(request, 'shop.html', context=context)
