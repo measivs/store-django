@@ -22,12 +22,13 @@
             <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                 <div class="navbar-nav mx-auto">
                     <a href="{% url 'home' %}" class="nav-item nav-link {% if request.path == '/' %}active{% endif %}">Home</a>
-                    <a href="{% url 'store' %}" class="nav-item nav-link">Shop</a>
+                    <a href="{% url 'main_category' %}" class="nav-item nav-link">Shop</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
                         <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                            <a href="{% url 'cart' %}" class="dropdown-item">Cart</a>
-                            <a href="{% url 'checkout' %}" class="dropdown-item">Checkout</a>
+                            {% for parent in parent_categories %}
+                            <a href="{% url 'category' slug=parent.slug %}" class="dropdown-item">{{ parent.category_name }}</a>
+                            {% endfor %}
                         </div>
                     </div>
                     <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>

@@ -1,3 +1,6 @@
+from itertools import product
+from lib2to3.fixes.fix_input import context
+
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
@@ -29,16 +32,33 @@ def home(request):
 
 def category_list(request, slug=None):
     products = None
+    selected_category = None
 
     if slug:
-        categories = get_object_or_404(Category, slug=slug)
-        products = Product.objects.filter(category=categories)
+        # Get the selected category (which could be a parent or subcategory)
+        selected_category = get_object_or_404(Category, slug=slug)
+
+        # If it's a parent category, fetch products from its subcategories
+        if selected_category.parent is None:
+            subcategories = selected_category.children.all()
+            products = Product.objects.filter(category__in=subcategories)
+        else:
+            # If it's a subcategory, fetch products directly from that subcategory
+            products = Product.objects.filter(category=selected_category)
     else:
         products = Product.objects.all()
 
-    subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
+
+    parent_categories = Category.objects.filter(parent__isnull=True)
+    subcategories = Category.objects.filter(parent__isnull=False)
 
     product_tags = ProductTag.objects.all()
+    selected_tag_slug = request.GET.get('tag', None)
+
+    # Filter by tag if one is selected
+    if selected_tag_slug:
+        selected_tag = get_object_or_404(ProductTag, slug=selected_tag_slug)
+        products = products.filter(tags=selected_tag)
 
     search_query = request.GET.get('q')
     if search_query:
@@ -49,11 +69,29 @@ def category_list(request, slug=None):
     page_obj = paginator.get_page(page_number)
 
     context = {
+        'parent_categories': parent_categories,
         'product_tags': product_tags,
         'subcategories': subcategories,
         'page_obj': page_obj,
         'products': products,
-        'all_products_count': Product.objects.count()
+        'selected_category': selected_category,
+        'selected_tag': selected_tag_slug,
+    }
+
+    return render(request, 'shop.html', context=context)
+
+def filter_tag(request, slug):
+    products = Product.objects.all()
+
+    selected_tag = request.GET.get('tag')
+    if selected_tag:
+        products = Product.objects.filter(tags__name=selected_tag, slug=slug)
+
+    tags = ProductTag.objects.all()
+
+    context = {
+        'tags': tags,
+        'products': products,
     }
 
     return render(request, 'shop.html', context=context)
