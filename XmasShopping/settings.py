@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'store',
     'order',
     'mptt',
+    'versatileimagefield',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -131,6 +132,15 @@ STATICFILES_DIRS = [
 
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+VERSATILEIMAGEFIELD_SETTINGS = {
+    'site': {
+        'crop': {
+            'medium': (306, 214, True),
+            # Add other sizes if needed
+        }
+    }
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

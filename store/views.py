@@ -2,7 +2,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 
-from store.models import Product, Category
+from store.models import Product, Category, ProductTag
 from django.db.models import Count
 
 # Create your views here.
@@ -38,6 +38,8 @@ def category_list(request, slug=None):
 
     subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
 
+    product_tags = ProductTag.objects.all()
+
     search_query = request.GET.get('q')
     if search_query:
         products = products.filter(Q(name__icontains=search_query))
@@ -47,6 +49,7 @@ def category_list(request, slug=None):
     page_obj = paginator.get_page(page_number)
 
     context = {
+        'product_tags': product_tags,
         'subcategories': subcategories,
         'page_obj': page_obj,
         'products': products,
