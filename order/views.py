@@ -13,19 +13,26 @@ class AddToCartView(View):
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
 
+        if product.quantity <= 0:
+            messages.error(request, f"The product '{product.name}' is currently out of stock.")
+            return redirect('cart')
+
         # Retrieve or create the cart for the user
         cart, created = Cart.objects.get_or_create(user=request.user)
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
         # Check if product is out of stock
         new_quantity = cart_item.quantity + 1
-        if new_quantity > product.quantity or product.quantity <= 0:
-            # If the new quantity exceeds available stock, show an error message
-            messages.error(request, f"The product '{product.name}' is currently out of stock.")
+        if new_quantity > product.quantity:
+            messages.error(request,
+                           f"Cannot add more of '{product.name}' to your cart. Only {product.quantity} left in stock.")
             return redirect('cart')
 
         # If stock is sufficient, update the cart item quantity and save
-        cart_item.quantity = new_quantity
+        if created:
+            cart_item.quantity = 1
+        else:
+            cart_item.quantity += 1
         cart_item.save()
 
         messages.success(request, f"'{product.name}' has been added to your cart.")
@@ -42,11 +49,8 @@ class ViewCart(View):
         for item in items:
             item.total_price = item.product.price * item.quantity
 
-        total_items = sum(item.quantity for item in items)
-
         return render(request, 'cart.html', {
             'items': items,
-            'total_items': total_items,
         })
 
 class UpdateCartItem(View):

@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-    
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
             <h1 class="text-center text-white display-6">Shop Detail</h1>
@@ -35,20 +34,6 @@
                                 
                                 <form method="POST" action="{% url 'add_to_cart' single_product.id %}">
                                     {% csrf_token %}
-                                    <div class="input-group quantity mb-5" style="width: 100px;">
-                                        <div class="input-group-btn">
-                                            <button type="button" class="btn btn-sm btn-minus rounded-circle bg-light border" onclick="decrementQuantity()">
-                                                <i class="fa fa-minus"></i>
-                                            </button>
-                                        </div>
-                                        <input type="text" class="form-control form-control-sm text-center border-0" name="quantity" id="quantity" value="1" min="1">
-                                        <div class="input-group-btn">
-                                            <button type="button" class="btn btn-sm btn-plus rounded-circle bg-light border" onclick="incrementQuantity()">
-                                                <i class="fa fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    
                                     <button type="submit" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary">
                                         <i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart
                                     </button>
