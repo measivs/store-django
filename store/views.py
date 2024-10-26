@@ -1,3 +1,5 @@
+from django.contrib.admin.checks import must_inherit_from
+from django.db.models import Min, Max
 from django.views import View
 from django.views.generic import DetailView, ListView
 from django.db.models import Q
@@ -56,15 +58,23 @@ class CategoryProductListView(ListView):
         # Apply search query
         search_query = self.request.GET.get('q')
         if search_query:
-            queryset = queryset.filter(Q(name__icontains=search_query))
+            queryset = queryset.filter(Q(name__icontains=search_query) | Q(tag__name__icontains=search_query))
+
+        # Get the minimum and maximum prices from the Product model
+        min_price = int(self.request.GET.get('min_price', 0))
+        max_price = int(self.request.GET.get('max_price', 500))
+        queryset = queryset.filter(price__gte=min_price, price__lte=max_price)
 
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        price_data = Product.objects.aggregate(Min('price'), Max('price'))
 
         context['product_tags'] = ProductTag.objects.all()
         context['subcategories'] = Category.objects.filter(parent__isnull=False)
+        context['min_price'] = price_data['price__min'] or 0
+        context['max_price'] = price_data['price__max'] or 500
 
         return context
 
