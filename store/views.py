@@ -1,77 +1,95 @@
+from django.views import View
+from django.views.generic import DetailView, ListView
 from django.db.models import Q
-from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404
 
 from store.models import Product, Category, ProductTag
-from django.db.models import Count
 
 # Create your views here.
-def home(request):
-    parent_categories = Category.objects.filter(parent__isnull=True)
 
-    fruits_category = Category.objects.filter(category_name='fruits').first()
-    fruits_products = Product.objects.none()
-    if fruits_category:
-        fruits_products = Product.objects.filter(category__in=fruits_category.get_children())
+class HomeView(View):
+    def get(self, request, *args, **kwargs):
+        # Get all parent categories
+        parent_categories = Category.objects.filter(parent__isnull=True)
 
-    vegetables_category = Category.objects.filter(category_name='vegetables').first()
-    vegetables_products = Product.objects.none()
-    if vegetables_category:
-        vegetables_products = Product.objects.filter(category__in=vegetables_category.get_children())
+        # Get fruits category and its products
+        fruits_category = Category.objects.filter(category_name='fruits').first()
+        fruits_products = Product.objects.none()
+        if fruits_category:
+            fruits_products = Product.objects.filter(category__in=fruits_category.get_children())
 
-    context = {
-        'parent_categories': parent_categories,
-        'fruits_products': fruits_products,
-        'vegetables_products': vegetables_products,
-    }
+        # Get vegetables category and its products
+        vegetables_category = Category.objects.filter(category_name='vegetables').first()
+        vegetables_products = Product.objects.none()
+        if vegetables_category:
+            vegetables_products = Product.objects.filter(category__in=vegetables_category.get_children())
 
-    return render(request, 'index.html', context=context)
+        context = {
+            'parent_categories': parent_categories,
+            'fruits_products': fruits_products,
+            'vegetables_products': vegetables_products,
+        }
 
-def category_list(request, slug=None):
-    products = None
-
-    if slug:
-        categories = get_object_or_404(Category, slug=slug)
-        products = Product.objects.filter(category=categories)
-    else:
-        products = Product.objects.all()
-
-    product_tags = ProductTag.objects.all()
-
-    selected_tag_id = request.GET.get('tag')
-    if selected_tag_id:
-        products = products.filter(tag__id=selected_tag_id)
-
-    search_query = request.GET.get('q')
-    if search_query:
-        products = products.filter(Q(name__icontains=search_query))
-
-    # Pagination
-    paginator = Paginator(products, 2)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    subcategories = Category.objects.filter(parent__isnull=False).annotate(product_count=Count('products'))
-
-    context = {
-        'product_tags': product_tags,
-        'subcategories': subcategories,
-        'page_obj': page_obj,
-        'products': products,
-        'all_products_count': Product.objects.count()
-    }
-
-    return render(request, 'shop.html', context=context)
+        return render(request, 'index.html', context=context)
 
 
-def product_detail(request, slug, product_slug):
-    try:
-        single_product = Product.objects.get(category__slug=slug, slug=product_slug)
-    except Exception as e:
-        raise e
-    context = {'single_product': single_product}
+class CategoryProductListView(ListView):
+    model = Product
+    template_name = 'shop.html'
+    context_object_name = 'products'
+    paginate_by = 2
 
-    return render(request, 'shop-detail.html', context=context)
+    def get_queryset(self):
+        # If a slug is provided, filter products by the category with that slug
+        slug = self.kwargs.get('slug')
+        if slug:
+            category = get_object_or_404(Category, slug=slug)
+            queryset = Product.objects.filter(category=category)
+        else:
+            queryset = Product.objects.all()
 
-def contact(request):
-    return render(request, 'contact.html')
+        # Filter by tag if a tag is selected
+        selected_tag_id = self.request.GET.get('tag')
+        if selected_tag_id:
+            queryset = queryset.filter(tag__id=selected_tag_id)
+
+        # Apply search query
+        search_query = self.request.GET.get('q')
+        if search_query:
+            queryset = queryset.filter(Q(name__icontains=search_query))
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['product_tags'] = ProductTag.objects.all()
+        context['subcategories'] = Category.objects.filter(parent__isnull=False)
+
+        return context
+
+
+class ProductDetailView(DetailView):
+    model = Product
+    template_name = 'shop-detail.html'
+    context_object_name = 'single_product'
+
+    def get_object(self, queryset=None):
+        # Get the object based on the slugs
+        slug = self.kwargs.get('slug')
+        product_slug = self.kwargs.get('product_slug')
+        return get_object_or_404(Product, category__slug=slug, slug=product_slug)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+
+class ContactView(View):
+    template_name = 'contact.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        return render(request, self.template_name)

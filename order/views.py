@@ -1,3 +1,5 @@
+from django.views import View
+from django.views.generic import DetailView, ListView
 from django.contrib import messages
 from django.shortcuts import render
 from django.shortcuts import get_object_or_404, redirect
@@ -7,62 +9,71 @@ from store.models import Product
 
 # Create your views here.
 
-def add_to_cart(request, product_id):
-    product = get_object_or_404(Product, id=product_id)
+class AddToCartView(View):
+    def post(self, request, product_id):
+        product = get_object_or_404(Product, id=product_id)
 
-    if product.quantity <= 0:
-        messages.error(request, f"The product {product.name} is currently out of stock.")
-        return redirect('cart')
-
-    cart, created = Cart.objects.get_or_create(user=request.user)
-    cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
-
-    if not created:
-        cart_item.quantity += 1
-    else:
-        cart_item.quantity = 1
-    cart_item.save()
-
-    return redirect('cart')
-
-def view_cart(request):
-    if request.user.is_authenticated:
+        # Retrieve or create the cart for the user
         cart, created = Cart.objects.get_or_create(user=request.user)
-        items = cart.items.all()
-    else:
-        items = []
+        cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
-    for item in items:
-        item.total_price = item.product.price * item.quantity
+        # Check if product is out of stock
+        new_quantity = cart_item.quantity + 1
+        if new_quantity > product.quantity or product.quantity <= 0:
+            # If the new quantity exceeds available stock, show an error message
+            messages.error(request, f"The product '{product.name}' is currently out of stock.")
+            return redirect('cart')
 
-    total_items = sum(item.quantity for item in items)
+        # If stock is sufficient, update the cart item quantity and save
+        cart_item.quantity = new_quantity
+        cart_item.save()
 
-    return render(request, 'cart.html', {
-        'items': items,
-        'total_items': total_items,
-    })
-
-
-def update_cart_item(request, item_id):
-    item = get_object_or_404(CartItem, id=item_id)
-    requested_quantity = int(request.POST.get('quantity', 0))
-    product = get_object_or_404(Product, id=item.product.id)
-
-    if requested_quantity > product.quantity:
-        messages.error(request, f"Insufficient stock for {product.name}. Only {product.quantity} available.")
+        messages.success(request, f"'{product.name}' has been added to your cart.")
         return redirect('cart')
 
-    item.quantity = requested_quantity
-    item.save()
+class ViewCart(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            cart, created = Cart.objects.get_or_create(user=request.user)
+            items = cart.items.all()
+        else:
+            items = []
 
-    return redirect('cart')
+        for item in items:
+            item.total_price = item.product.price * item.quantity
+
+        total_items = sum(item.quantity for item in items)
+
+        return render(request, 'cart.html', {
+            'items': items,
+            'total_items': total_items,
+        })
+
+class UpdateCartItem(View):
+    def post(self, request, item_id):
+        item = get_object_or_404(CartItem, id=item_id)
+        requested_quantity = int(request.POST.get('quantity', 0))
+        product = get_object_or_404(Product, id=item.product.id)
+
+        if requested_quantity > product.quantity:
+            messages.error(request, f"Insufficient stock for {product.name}. Only {product.quantity} available.")
+            return redirect('cart')
+
+        item.quantity = requested_quantity
+        item.save()
+
+        messages.success(request, f"{item.product.name} quantity updated to {requested_quantity}.")
+        return redirect('cart')
 
 
-def remove_from_cart(request, item_id):
-    cart_item = get_object_or_404(CartItem, id=item_id)
-    cart_item.delete()
+class RemoveFromCart(View):
+    def post(self, request, item_id):
+        cart_item = get_object_or_404(CartItem, id=item_id)
+        cart_item.delete()
 
-    return redirect('cart')
+        messages.success(request, f"{cart_item.product.name} has been removed from your cart.")
+        return redirect('cart')
 
-def checkout(request):
-    return render(request, 'chackout.html')
+class CheckoutView(View):
+    def get(self, request):
+        return render(request, 'chackout.html')

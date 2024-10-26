@@ -5,10 +5,10 @@ from django.urls import path
 from store import views
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('shop/', views.category_list, name='store'),
-    path('category/', views.category_list, name='category'),
-    path('category/<slug:slug>/', views.category_list, name='category'),
-    path('product/<slug:slug>/<slug:product_slug>/', views.product_detail, name='product_detail'),
-    path('contact/', views.contact, name='contact'),
+    path('', views.HomeView.as_view(), name='home'),
+    path('shop/', views.CategoryProductListView.as_view(), name='store'),
+    path('category/', views.CategoryProductListView.as_view(), name='category'),
+    path('category/<slug:slug>/', views.CategoryProductListView.as_view(), name='category'),
+    path('product/<slug:slug>/<slug:product_slug>/', views.ProductDetailView.as_view(), name='product_detail'),
+    path('contact/', views.ContactView.as_view(), name='contact'),
 ]
