@@ -1,7 +1,4 @@
-from enum import unique
-from idlelib.pyparse import trans
 from mptt.models import MPTTModel, TreeForeignKey
-from django.urls import reverse
 from django.db import models
 from versatileimagefield.fields import VersatileImageField
 
