@@ -39,11 +39,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users',
-    'store',
     'order',
     'mptt',
-    'versatileimagefield',
+    'store',
+    'users.apps.UsersConfig',
 ]
 
 AUTH_USER_MODEL = 'users.User'

@@ -7,3 +7,5 @@ from order.models import Cart
 def create_user_cart(sender, instance, created, **kwargs):
     if created:
         Cart.objects.create(cart_id=instance)
+
+
