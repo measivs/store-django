@@ -118,7 +118,7 @@
                                     <div class="row g-4">
                                         {% for product in fruits_products %}
                                         <div class="col-md-6 col-lg-4 col-xl-3">
-                                            <div class="rounded position-relative fruite-item">
+                                            <a href="{% url 'product_detail' slug=product.category.slug product_slug=product.slug %}" class="rounded position-relative fruite-item">
                                                 <div class="fruite-img">
                                                     <img src="{{ product.product_image.url }}" class="img-fluid w-100 rounded-top" alt="">
                                                 </div>
@@ -137,7 +137,7 @@
 
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </a>
                                         </div>
                                         {% endfor %}
                                     </div>
@@ -156,6 +156,7 @@
                 <h1 class="mb-0">Fresh Organic Vegetables</h1>
                 <div class="owl-carousel vegetable-carousel justify-content-center">
                     {% for product in vegetables_products %}
+                    <a href="{% url 'product_detail' slug=product.category.slug product_slug=product.slug %}" >
                     <div class="border border-primary rounded position-relative vesitable-item">
                         <div class="vesitable-img">
                             <img src="{{ product.product_image.url }}" class="img-fluid w-100 rounded-top" alt="">
