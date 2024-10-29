@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.contrib import messages
 from django.shortcuts import render
@@ -8,7 +9,9 @@ from store.models import Product
 
 # Create your views here.
 
-class AddToCartView(View):
+class AddToCartView(LoginRequiredMixin, View):
+    login_url = '/users/login/'
+
     def post(self, request, product_id):
         product = get_object_or_404(Product, id=product_id)
 
@@ -37,7 +40,9 @@ class AddToCartView(View):
         messages.success(request, f"'{product.name}' has been added to your cart.")
         return redirect('cart')
 
-class ViewCart(View):
+class ViewCart(LoginRequiredMixin, View):
+    login_url = '/users/login/'
+
     def get(self, request):
         if request.user.is_authenticated:
             cart, created = Cart.objects.get_or_create(user=request.user)
@@ -52,7 +57,9 @@ class ViewCart(View):
             'items': items,
         })
 
-class UpdateCartItem(View):
+class UpdateCartItem(LoginRequiredMixin, View):
+    login_url = '/users/login/'
+
     def post(self, request, item_id):
         item = get_object_or_404(CartItem, id=item_id)
         requested_quantity = int(request.POST.get('quantity', 0))
@@ -69,7 +76,9 @@ class UpdateCartItem(View):
         return redirect('cart')
 
 
-class RemoveFromCart(View):
+class RemoveFromCart(LoginRequiredMixin, View):
+    login_url = '/users/login/'
+
     def post(self, request, item_id):
         cart_item = get_object_or_404(CartItem, id=item_id)
         cart_item.delete()
@@ -77,6 +86,8 @@ class RemoveFromCart(View):
         messages.success(request, f"{cart_item.product.name} has been removed from your cart.")
         return redirect('cart')
 
-class CheckoutView(View):
+class CheckoutView(LoginRequiredMixin, View):
+    login_url = '/users/login/'
+
     def get(self, request):
         return render(request, 'chackout.html')
