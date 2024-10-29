@@ -133,16 +133,10 @@ STATICFILES_DIRS = [
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-VERSATILEIMAGEFIELD_SETTINGS = {
-    'site': {
-        'crop': {
-            'medium': (306, 214, True),
-            # Add other sizes if needed
-        }
-    }
-}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_REDIRECT_URL = '/'
