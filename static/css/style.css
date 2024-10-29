@@ -495,5 +495,17 @@
 }
 /*** Footer End ***/
 
+.divider:after,
+.divider:before {
+content: "";
+flex: 1;
+height: 1px;
+background: #eee;
+}
 
-
+body {
+    background: #D8BFD8;
+}
+.large-text {
+    font-size: 1.1rem;
+}

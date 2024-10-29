@@ -1,4 +1,3 @@
-from django.contrib.admin.checks import must_inherit_from
 from django.db.models import Min, Max
 from django.views import View
 from django.views.generic import DetailView, ListView
