@@ -38,9 +38,15 @@
                         <i class="fa fa-shopping-bag fa-2x"></i>
                         <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justPPify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{ total_items }}</span>
                     </a>
-                    <a href="#" class="my-auto">
-                        <i class="fas fa-user fa-2x"></i>
-                    </a>
+                    {% if not user.is_authenticated %}
+                        <div class="my-auto">
+                            <a href="{% url 'login' %}" class="btn btn-outline-primary" style="font-size: 1.2rem; padding: 0.5rem 1rem; text-decoration: none;">Log In</a>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'profile' %}" class="my-auto">
+                            <i class="fas fa-user-circle fa-2x"></i>
+                        </a>
+                    {% endif %}
                 </div>
             </div>
         </nav>

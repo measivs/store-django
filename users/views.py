@@ -1,9 +1,11 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView
-from django.contrib.auth.models import User
+from django.shortcuts import render
+
+from .models import User
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
-from .forms import UserCreationForm
+from django.views.generic import CreateView, View
+from .forms import UserCreationForm, CustomUserCreationForm
 from django.contrib import messages
 
 # Create your views here.
@@ -29,6 +31,22 @@ class LogInView(LoginView):
 
 class RegisterView(CreateView):
     model = User
-    form_class = UserCreationForm
-    template_name = 'register.html'  # Your template for registration
+    form_class = CustomUserCreationForm
+    template_name = 'register.html'
     success_url = reverse_lazy('login')
+
+    def form_valid(self, form):
+        user = form.save()
+        messages.success(self.request, "Registration successful! You can now log in.")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "There was an error with your registration. Please check the details and try again.")
+        return super().form_invalid(form)
+
+
+class ProfileView(View):
+    def get(self, request):
+        return render(request, 'profile.html')
+
+
