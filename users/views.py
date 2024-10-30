@@ -41,12 +41,10 @@ class RegisterView(CreateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "There was an error with your registration. Please check the details and try again.")
         return super().form_invalid(form)
 
 
 class ProfileView(View):
     def get(self, request):
         return render(request, 'profile.html')
-
 
