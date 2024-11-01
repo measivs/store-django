@@ -5,7 +5,7 @@ from django.shortcuts import render
 from .models import User
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View
-from .forms import UserCreationForm, CustomUserCreationForm
+from .forms import CustomUserCreationForm
 from django.contrib import messages
 
 # Create your views here.
@@ -48,3 +48,9 @@ class ProfileView(View):
     def get(self, request):
         return render(request, 'profile.html')
 
+
+def custom_404_view(request, exception):
+    return render(request, '404.html', status=404)
+
+def custom_500_view(request, exception):
+    return render(request, '500.html', status=500)

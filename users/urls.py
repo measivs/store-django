@@ -1,3 +1,4 @@
+from django.conf.urls import handler500
 from django.urls import path
 from users import views
 from django.contrib.auth import views as auth_views
@@ -8,3 +9,6 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
+
+handler404 = views.custom_404_view
+handler500 = views.custom_500_view

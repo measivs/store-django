@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container text-center" style="padding: 200px 20px;">
+        <h1 style="margin-bottom: 30px;">Oops! Something went wrong.</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 40px;">
+            We're experiencing technical difficulties. Please try again later or contact support.
+        </p>
+        <a href="{% url 'home' %}" class="btn btn-primary">Go back to Home</a>
+    </div>
+{% endblock %}
