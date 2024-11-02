@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-qp1i^6i#g61jic2_!x+x(@+-9#ycxpt2(8n-e%e835cxx12!=@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'localhost:8001']
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'mptt',
     'store',
     'users.apps.UsersConfig',
+    # 'crispy_forms',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -149,8 +150,9 @@ LOGOUT_REDIRECT_URL = '/'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': '/var/tmp/django_cache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache'),
     }
 }
 
-
+EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'

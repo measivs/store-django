@@ -95,13 +95,3 @@ class ProductDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
-
-
-class ContactView(View):
-    template_name = 'contact.html'
-
-    def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
-
-    def post(self, request, *args, **kwargs):
-        return render(request, self.template_name)

@@ -1,11 +1,13 @@
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect
 
 from .models import User
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, View
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ContactForm
 from django.contrib import messages
 
 # Create your views here.
@@ -42,6 +44,29 @@ class RegisterView(CreateView):
 
     def form_invalid(self, form):
         return super().form_invalid(form)
+
+
+class ContactView(LoginRequiredMixin, View):
+    login_url = '/users/login/'
+    template_name = 'contact.html'
+
+    def get(self, request, *args, **kwargs):
+        form = ContactForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            subject = f"Contact Form Submission from {form.cleaned_data['name']}"
+            message = form.cleaned_data['message']
+            from_email = form.cleaned_data['email']
+            recipient_list = ['mea@mea.com']
+
+            send_mail(subject, message, from_email, recipient_list)
+            messages.success(request, "Your message has been sent successfully!")
+            return redirect('contact')
+
+        return render(request, self.template_name, {'form': form})
 
 
 class ProfileView(View):
