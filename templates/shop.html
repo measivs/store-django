@@ -7,8 +7,15 @@
             <h1 class="text-center text-white display-6">Shop</h1>
             <ol class="breadcrumb justify-content-center mb-0">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item"><a href="#">Pages</a></li>
-                <li class="breadcrumb-item active text-white">Shop</li>
+                <li class="breadcrumb-item"><a href="#">Categories</a></li>
+            
+                 <!-- Dynamic Breadcrumb for Selected Category -->
+                {% if category %}
+                    <li class="breadcrumb-item active text-white">{{ category.category_name }}</li>
+                {% else %}
+                    <li class="breadcrumb-item active text-white"></li>
+                {% endif %}
+            
             </ol>
         </div>
         <!-- Single Page Header End -->
@@ -40,48 +47,65 @@
                                 <div class="row g-4">
                                     <div class="col-lg-12">
                                         <div class="mb-3">
-                                            <h4>Categories</h4>
-                                            <ul class="list-unstyled fruite-categorie">
+                                            <div class="categories">
+                                                {% if subcategories %}
+                                                    <!-- Only show subcategories if a parent category is clicked -->
+                                                    <h4>Subcategories</h4>
+                                                    <ul class="list-unstyled fruite-categorie">
+                                                        {% for subcategory in subcategories %}
+                                                        <li>
+                                                            <div class="d-flex justify-content-between fruite-name">
+                                                                <a href="{% url 'category' slug=subcategory.slug %}"><i class="fas fa-apple-alt me-2"></i>{{ subcategory.category_name }}</a>
+                                                            </div>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% else %}
+                                                    <!-- Show parent categories if no parent category is clicked -->
+                                                    <h4>Categories</h4>
+                                                    <ul class="list-unstyled fruite-categorie">
+                                                        {% for parent in parent_categories %}
+                                                        <li>
+                                                            <div class="d-flex justify-content-between fruite-name">
+                                                                <a href="{% url 'category' slug=parent.slug %}"><i class="fas fa-apple-alt me-2"></i>{{ parent.category_name }}</a>
+                                                            </div>
+                                                        </li>
+                                                        {% endfor %}
+                                                    </ul>
+                                                {% endif %}
+                                            </div>
 
-                                                {% for category in subcategories %}
-                                                <li>
-                                                    <div class="d-flex justify-content-between fruite-name">
-                                                        <a href="{% url 'category' slug=category.slug %}"><i class="fas fa-apple-alt me-2"></i>{{ category }}</a>
-                                                    </div>
-                                                </li>
-                                               {% endfor %}
-                                            </ul>
                                         </div>
                                     </div>
                                     
-<form method="GET" action="{% url 'main_category' %}">
-    <div class="col-lg-12">
-        <div class="mb-3">
-            <h4 class="mb-2">Price</h4>
-            <label for="min_price">Min Price: <output id="minAmount">{{ min_price }}</output></label>
-            <input type="range" class="form-range w-100" id="min_price" name="min_price" min="{{ min_price }}" max="{{ max_price }}" value="{{ min_price }}" oninput="minAmount.value=min_price.value">
-            
-            <label for="max_price">Max Price: <output id="maxAmount">{{ max_price }}</output></label>
-            <input type="range" class="form-range w-100" id="max_price" name="max_price" min="{{ min_price }}" max="{{ max_price }}" value="{{ max_price }}" oninput="maxAmount.value=max_price.value">
-        </div>
-    </div>
-    
-    <div class="col-lg-12">
-        <div class="mb-3">
-            <h4>Tags</h4>
-            {% for tag in product_tags %}
-            <div class="mb-2">
-                <input type="radio" class="me-2" id="tag-{{ tag.id }}" name="tag" value="{{ tag.id }}">
-                <label for="tag-{{ tag.id }}">{{ tag.name }}</label>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    
-    <div class="d-flex justify-content-center my-4">
-        <button type="submit" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Filter</button>
-    </div>
-</form>
+                                        <form method="GET" action="{% url 'main_category' %}">
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <h4 class="mb-2">Price</h4>
+                                                    <label for="min_price">Min Price: <output id="minAmount">{{ min_price }}</output></label>
+                                                    <input type="range" class="form-range w-100" id="min_price" name="min_price" min="{{ min_price }}" max="{{ max_price }}" value="{{ min_price }}" oninput="minAmount.value=min_price.value">
+                                                    
+                                                    <label for="max_price">Max Price: <output id="maxAmount">{{ max_price }}</output></label>
+                                                    <input type="range" class="form-range w-100" id="max_price" name="max_price" min="{{ min_price }}" max="{{ max_price }}" value="{{ max_price }}" oninput="maxAmount.value=max_price.value">
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="col-lg-12">
+                                                <div class="mb-3">
+                                                    <h4>Tags</h4>
+                                                    {% for tag in product_tags %}
+                                                    <div class="mb-2">
+                                                        <input type="radio" class="me-2" id="tag-{{ tag.id }}" name="tag" value="{{ tag.id }}">
+                                                        <label for="tag-{{ tag.id }}">{{ tag.name }}</label>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="d-flex justify-content-center my-4">
+                                                <button type="submit" class="btn border border-secondary px-4 py-3 rounded-pill text-primary w-100">Filter</button>
+                                            </div>
+                                        </form>
 
                                 
                                     <div class="col-lg-12">

@@ -44,25 +44,29 @@ class CategoryProductListView(ListView):
     paginate_by = 2
 
     def get_queryset(self):
-        # If a slug is provided, filter products by the category with that slug
         slug = self.kwargs.get('slug')
+        queryset = Product.objects.all()
+
         if slug:
             category = get_object_or_404(Category, slug=slug)
-            queryset = Product.objects.filter(category=category)
-        else:
-            queryset = Product.objects.all()
 
-        # Filter by tag if a tag is selected
+            # If the category is a parent, filter products by its subcategories
+            if category.parent is None:
+                subcategories = Category.objects.filter(parent=category)
+                queryset = queryset.filter(category__in=subcategories)
+            else:
+                # If it's a subcategory, filter products by that category
+                queryset = queryset.filter(category=category)
+
+        # Additional filters (tags, search, price range)
         selected_tag_id = self.request.GET.get('tag')
         if selected_tag_id:
             queryset = queryset.filter(tag__id=selected_tag_id)
 
-        # Apply search query
         search_query = self.request.GET.get('q')
         if search_query:
             queryset = queryset.filter(Q(name__icontains=search_query) | Q(tag__name__icontains=search_query))
 
-        # Get the minimum and maximum prices from the Product model
         min_price = int(self.request.GET.get('min_price', 0))
         max_price = int(self.request.GET.get('max_price', 500))
         queryset = queryset.filter(price__gte=min_price, price__lte=max_price)
@@ -71,10 +75,20 @@ class CategoryProductListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        slug = self.kwargs.get('slug')
         price_data = Product.objects.aggregate(Min('price'), Max('price'))
 
+        # Add subcategories only if a parent category is selected
+        if slug:
+            parent_category = get_object_or_404(Category, slug=slug)
+            context['category'] = parent_category
+            if parent_category.parent is None:
+                context['subcategories'] = Category.objects.filter(parent=parent_category)
+            else:
+                context['subcategories'] = []
+
         context['product_tags'] = ProductTag.objects.all()
-        context['subcategories'] = Category.objects.filter(parent__isnull=False)
+        context['parent_categories'] = Category.objects.filter(parent__isnull=True)
         context['min_price'] = price_data['price__min'] or 0
         context['max_price'] = price_data['price__max'] or 500
 
