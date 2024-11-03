@@ -2,6 +2,7 @@ from django.db.models import Min, Max
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.cache import cache_page
+from django.views.decorators.vary import vary_on_headers
 from django.views.generic import DetailView, ListView
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
@@ -36,6 +37,7 @@ class HomeView(View):
         return render(request, 'index.html', context=context)
 
 
+@method_decorator(vary_on_headers('Cookie'), name='dispatch')
 @method_decorator(cache_page(600), name='dispatch')
 class CategoryProductListView(ListView):
     model = Product
