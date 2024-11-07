@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('order/', include('order.urls')),
     path('users/', include('users.urls')),
+    path('rosetta/', include('rosetta.urls')),
 ]
 
 urlpatterns += i18n_patterns(
