@@ -3,6 +3,7 @@ import os
 from PIL import Image
 from mptt.models import MPTTModel, TreeForeignKey
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 # Create your models here.
 
@@ -28,8 +29,8 @@ class ProductTag(models.Model):
         return self.name
 
 class Product(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.TextField()
+    name = models.CharField(_("Name"), max_length=200)
+    description = models.TextField(_("Description"))
     price = models.DecimalField(max_digits=10, decimal_places=2)
     product_image = models.ImageField(upload_to='products/')
     product_thumbnail = models.ImageField(upload_to='products/thumbnails/', editable=False, null=True, blank=True)
