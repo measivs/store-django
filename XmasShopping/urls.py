@@ -19,12 +19,27 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
+from django.utils.translation import gettext_lazy as _
+from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path('', include('store.urls')),
     path('admin/', admin.site.urls),
     path('order/', include('order.urls')),
     path('users/', include('users.urls')),
+]
+
+urlpatterns += i18n_patterns(
+    path('admin/', admin.site.urls),
+    path('', include('store.urls')),
+    path('order/', include('order.urls')),
+    path('users/', include('users.urls')),
+    prefix_default_language=False,
+)
+
+# Add language switching URL
+urlpatterns += [
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 if settings.DEBUG:
