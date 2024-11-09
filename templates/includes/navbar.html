@@ -29,27 +29,17 @@
                     <a href="{% url 'main_category' %}" class="nav-item nav-link">{% trans 'Shop' %}</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{% trans 'Categories' %}</a>
-                    {% cache 600 navbar %}
+                        {% cache 600 navbar %}
                         <div class="dropdown-menu m-0 bg-secondary rounded-0">
                             {% for parent in parent_categories %}
-                                <a href="{% url 'category' slug=parent.slug %}" class="dropdown-item">{{ parent.category_name }}</a>
+                            <a href="{% url 'category' slug=parent.slug %}" class="dropdown-item">{{ parent.category_name }}</a>
                             {% endfor %}
                         </div>
+                        {% endcache %}
                     </div>
-                    {% endcache %}
                     <a href="{% url 'contact' %}" class="nav-item nav-link">{% trans 'Contact' %}</a>
                 </div>
-
-{#                <!-- Language Switcher -->#}
-{#                <form action="{% url 'set_language' %}" method="post" class="ms-auto d-flex">#}
-{#                    {% csrf_token %}#}
-{#                    <select name="language" onchange="this.form.submit()" class="form-select form-select-sm">#}
-{#                        <option value="en" {% if LANGUAGE_CODE == 'en' %}selected{% endif %}>English</option>#}
-{#                        <option value="ge" {% if LANGUAGE_CODE == 'ge' %}selected{% endif %}>Georgian</option>#}
-{#                    </select>#}
-{#                </form>#}
-
-
+            
                 <div class="d-flex m-3 me-0">
                     <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
                     <a href="{% url 'cart' %}" class="position-relative me-4 my-auto">
@@ -68,7 +58,6 @@
                 </div>
             </div>
         </nav>
-        
     </div>
 </div>
 <!-- Navbar End -->

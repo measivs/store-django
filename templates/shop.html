@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block content %}
         <!-- Single Page Header start -->
@@ -8,14 +9,14 @@
             <ol class="breadcrumb justify-content-center mb-0">
                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                 <li class="breadcrumb-item"><a href="#">Categories</a></li>
-            
+
                  <!-- Dynamic Breadcrumb for Selected Category -->
                 {% if category %}
                     <li class="breadcrumb-item active text-white">{{ category.category_name }}</li>
                 {% else %}
                     <li class="breadcrumb-item active text-white"></li>
                 {% endif %}
-            
+
             </ol>
         </div>
         <!-- Single Page Header End -->
@@ -24,11 +25,8 @@
         <!-- Fruits Shop Start-->
         <div class="container-fluid fruite py-5">
             <div class="container py-5">
-                <h1 class="mb-4">Fresh fruits and Vegetables Shop</h1>
                 <div class="row g-4">
                     <div class="col-lg-12">
-                        
-                        
                         <div class="row g-4 mb-4">
                             <div class="col-xl-3">
                                 <div class="input-group w-100 mx-auto d-flex">
@@ -81,7 +79,7 @@
                                         <form method="GET" action="{% url 'main_category' %}">
                                             <div class="col-lg-12">
                                                 <div class="mb-3">
-                                                    <h4 class="mb-2">Price</h4>
+                                                    <h4 class="mb-2">{% trans 'Price' %}</h4>
                                                     <label for="min_price">Min Price: <output id="minAmount">{{ min_price }}</output></label>
                                                     <input type="range" class="form-range w-100" id="min_price" name="min_price" min="{{ min_price }}" max="{{ max_price }}" value="{{ min_price }}" oninput="minAmount.value=min_price.value">
                                                     

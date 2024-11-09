@@ -27,6 +27,20 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('order/', include('order.urls')),
     path('users/', include('users.urls')),
+    path('rosetta/', include('rosetta.urls')),
+]
+
+urlpatterns += i18n_patterns(
+    path('admin/', admin.site.urls),
+    path('', include('store.urls')),
+    path('order/', include('order.urls')),
+    path('users/', include('users.urls')),
+    prefix_default_language=False,
+)
+
+# Add language switching URL
+urlpatterns += [
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
 
 urlpatterns += i18n_patterns(

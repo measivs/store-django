@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'store',
     'users.apps.UsersConfig',
     'modeltranslation',
+    'rosetta',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -165,4 +166,3 @@ CACHES = {
 
 EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = BASE_DIR / 'sent_emails'
-
